@@ -1,12 +1,8 @@
 <?php
-require_once '../includes/auth.php';
-requireAdmin();
-require_once '../config/database.php';
+require_once '../init.php'; // Nuestro puente hacia POO
+use App\Usuario;
 
-// Generar token CSRF
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+requireAdmin(); 
 
 $mensaje = '';
 
@@ -15,19 +11,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("❌ Error de seguridad.");
     }
 
-    $username = trim($_POST['username']);
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
-    $nombre   = trim($_POST['nombre']);
-    $apellido = trim($_POST['apellido']);
-    $cedula   = trim($_POST['cedula']);
-    $telefono = trim($_POST['telefono']);
-    $email    = trim($_POST['email']);
-    $rol      = $_POST['rol'];
+    $userModel = new Usuario($pdo); // Usamos la nueva clase
 
     try {
-        $stmt = $pdo->prepare("INSERT INTO users (username, password, nombre, apellido, cedula, telefono, email, rol) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->execute([$username, $password, $nombre, $apellido, $cedula, $telefono, $email, $rol]);
-        $mensaje = "✅ Usuario <strong>$nombre</strong> registrado exitosamente.";
+        $userModel->registrar(
+            $_POST['username'], $_POST['password'], $_POST['nombre'], 
+            $_POST['apellido'], $_POST['cedula'], $_POST['telefono'], 
+            $_POST['email'], $_POST['rol']
+        );
+        $mensaje = "✅ Usuario <strong>" . htmlspecialchars($_POST['nombre']) . "</strong> registrado exitosamente.";
     } catch (Exception $e) {
         $mensaje = "❌ Error: " . $e->getMessage();
     }
@@ -38,13 +30,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <style>
     body { background-image: linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)), url('https://i.imgur.com/ArjbuJ2.jpeg'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; display: flex; flex-direction: column; }
-    .glass-card { background: rgba(255, 255, 255, 0.25); backdrop-filter: blur(15px); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); max-width: 600px; margin: 50px auto; }
+    .glass-card { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); padding: 40px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.3); max-width: 600px; margin: 50px auto; box-shadow: 0 8px 32px rgba(0,0,0,0.15); }
     .form-control { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 8px; border: 1px solid #ccc; box-sizing: border-box; }
 </style>
 
 <div class="glass-card">
     <h2 style="text-align:center;">👤 Registrar Nuevo Personal</h2>
-    <?php if ($mensaje): ?><div style="text-align:center; padding:10px; background:#d4edda; margin-bottom:10px;"><?= $mensaje ?></div><?php endif; ?>
+    <?php if ($mensaje): ?><div style="text-align:center; padding:10px; background:#d4edda; margin-bottom:10px; border-radius:5px;"><?= $mensaje ?></div><?php endif; ?>
     
     <form method="POST">
         <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
@@ -70,3 +62,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <footer style="text-align:center; padding:20px; font-weight:bold;">© 2026 Farmacia SAHUM - Sistema de Inventario </footer>
+
+<?php include '../includes/footer.php'; ?>

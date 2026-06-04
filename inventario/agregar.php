@@ -1,14 +1,9 @@
 <?php
-require_once '../includes/auth.php';
+require_once '../init.php'; 
+use App\Medicamento;
+
 requireLogin();
 requireOperator(); 
-require_once '../config/database.php';
-require_once '../models/Medicamento.php';
-
-// Generar token CSRF
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 
 $medModel = new Medicamento($pdo);
 $categorias = $medModel->obtenerCategorias();
@@ -33,20 +28,29 @@ if ($_POST) {
             $existente = $medModel->buscarExistente($nombre);
 
             if ($existente) {
-                // Actualizar a través del modelo
+
                 $nuevo_stock = $existente['stock'] + $stock_nuevo;
+                
                 $medModel->actualizar($existente['id'], $nombre, $presentacion, $concentracion, $categoria_id, $nuevo_stock, $stock_min);
                 $medModel->registrarMovimiento($existente['id'], 'entrada', $stock_nuevo, $_SESSION['user_id'], 'Entrada adicional - Existente');
                 
-                $mensaje = "✅ Stock actualizado. Se sumaron <strong>$stock_nuevo</strong> unidades.";
+                $mensaje = "✅ Stock actualizado.";
             } else {
-                // Crear a través del modelo
-                $medModel->crear($nombre, $presentacion, $concentracion, $categoria_id, $stock_nuevo, $stock_min);
+                // Asignamos propiedades al objeto
+                $medModel->nombre = $nombre;
+                $medModel->presentacion = $presentacion;
+                $medModel->concentracion = $concentracion;
+                $medModel->categoria_id = $categoria_id;
+                $medModel->stock = $stock_nuevo;
+                $medModel->stock_minimo = $stock_min;
+                
+                $medModel->crear();
                 $nuevo_id = $pdo->lastInsertId();
                 $medModel->registrarMovimiento($nuevo_id, 'entrada', $stock_nuevo, $_SESSION['user_id'], 'Stock inicial - Nuevo');
 
-                $mensaje = "✅ Nuevo medicamento <strong>$nombre</strong> creado correctamente.";
+                $mensaje = "✅ Nuevo medicamento <strong>$nombre</strong> creado.";
             }
+
             $pdo->commit();
         } catch (Exception $e) {
             $pdo->rollBack();

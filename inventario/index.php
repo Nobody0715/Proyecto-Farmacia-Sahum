@@ -1,8 +1,6 @@
 <?php
-require_once '../includes/auth.php';
-requireLogin();
-require_once '../config/database.php';
-require_once '../models/Medicamento.php';
+require_once '../init.php'; 
+use App\Medicamento; 
 
 $medModel = new Medicamento($pdo);
 $search = $_GET['search'] ?? '';

@@ -1,0 +1,8 @@
+{
+    "name": "josue/farmacia_sahum",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}

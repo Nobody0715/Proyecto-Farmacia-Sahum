@@ -1,4 +1,8 @@
 <?php
+namespace App;
+
+use PDO;
+
 class Medicamento {
     private $db;
     
@@ -22,7 +26,7 @@ class Medicamento {
     public function buscarExistente($nombre) {
         $stmt = $this->db->prepare("SELECT * FROM medicamentos WHERE LOWER(nombre) = LOWER(?) AND deleted_at IS NULL LIMIT 1");
         $stmt->execute([$nombre]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function buscar($search = '', $bajo_stock = false) {
@@ -44,13 +48,13 @@ class Medicamento {
         
         $stmt = $this->db->prepare($sql);
         $stmt->execute($params);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
     public function obtenerPorId($id) {
         $stmt = $this->db->prepare("SELECT * FROM medicamentos WHERE id = ?");
         $stmt->execute([$id]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
     public function crear() {
@@ -58,10 +62,12 @@ class Medicamento {
         return $stmt->execute([$this->nombre, $this->presentacion, $this->concentracion, $this->categoria_id, $this->stock, $this->stock_minimo]);
     }
 
-    public function actualizar($id) {
-        $stmt = $this->db->prepare("UPDATE medicamentos SET nombre = ?, presentacion = ?, concentracion = ?, categoria_id = ?, stock = ?, stock_minimo = ? WHERE id = ?");
-        return $stmt->execute([$this->nombre, $this->presentacion, $this->concentracion, $this->categoria_id, $this->stock, $this->stock_minimo, $id]);
-    }
+   public function actualizar($id, $nombre, $presentacion, $concentracion, $categoria_id, $stock, $stock_minimo) {
+    $stmt = $this->db->prepare("UPDATE medicamentos SET 
+        nombre = ?, presentacion = ?, concentracion = ?, categoria_id = ?, stock = ?, stock_minimo = ? 
+        WHERE id = ?");
+    return $stmt->execute([$nombre, $presentacion, $concentracion, $categoria_id, $stock, $stock_minimo, $id]);
+}
 
     public function registrarMovimiento($id, $tipo, $cantidad, $usuario_id, $observacion) {
         $stmt = $this->db->prepare("INSERT INTO movimientos (medicamento_id, tipo, cantidad, usuario_id, observacion) VALUES (?, ?, ?, ?, ?)");

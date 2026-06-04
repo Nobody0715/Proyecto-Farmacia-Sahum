@@ -1,28 +1,32 @@
 <?php
-require_once '../includes/auth.php';
+require_once '../init.php'; 
+use App\Medicamento;
+
 requireLogin();
 requireAdmin();
-require_once '../config/database.php';
-require_once '../models/Medicamento.php';
 
 $medModel = new Medicamento($pdo);
 $id = (int)$_GET['id'] ?? 0;
 $mensaje = '';
 
+// Obtenemos los datos a través del método de la clase
 $med = ($id > 0) ? $medModel->obtenerPorId($id) : null;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0 && $med) {
+    // Validar Token CSRF
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
-        die("❌ Error de seguridad.");
+        die("❌ Error de seguridad: Solicitud no autorizada.");
     }
 
     $observacion = trim($_POST['observacion']);
+
     if (empty($observacion)) {
         $mensaje = "❌ Debes escribir un motivo de eliminación.";
     } else {
         try {
-            // Llamada al nuevo método POO
+            // Lógica delegada totalmente al modelo
             $medModel->eliminarLogico($id, $_SESSION['user_id'], $observacion, $med['stock']);
+            
             header('Location: ../inventario/index.php?msg=eliminado');
             exit;
         } catch (Exception $e) {
@@ -41,16 +45,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0 && $med) {
 
 <div class="glass-card">
     <h2 style="text-align:center;">🗑️ Eliminar Medicamento</h2>
-    <?php if ($mensaje): ?><p style="color:red; background:#ffebee; padding:15px; border-radius:5px; text-align:center;"><?= $mensaje ?></p><?php endif; ?>
+
+    <?php if ($mensaje): ?>
+        <p style="color:red; background:#ffebee; padding:15px; border-radius:5px; text-align:center;"><?= $mensaje ?></p>
+    <?php endif; ?>
 
     <?php if ($med): ?>
         <p><strong>Medicamento:</strong> <?= htmlspecialchars($med['nombre']) ?></p>
         <p><strong>Stock actual a dar de baja:</strong> <?= $med['stock'] ?> unidades</p>
-        <form method="POST">
+
+        <form method="POST" style="margin-top:20px;">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <label><strong>Motivo de Eliminación:</strong></label>
+            
+            <label><strong>Motivo de Eliminación / Observación:</strong> <span style="color:red;">*</span></label><br><br>
             <textarea name="observacion" rows="5" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; margin: 10px 0;" required></textarea>
-            <button type="submit" style="padding:12px 25px; background:#e74c3c; color:white; border:none; cursor:pointer; border-radius:8px; width:100%; font-weight:bold;">🗑️ Eliminar Medicamento</button>
+            
+            <button type="submit" style="padding:12px 25px; background:#e74c3c; color:white; border:none; cursor:pointer; border-radius:8px; width:100%; font-weight:bold;"
+                onclick="return confirm('¿Confirmar eliminación definitiva?')">
+                🗑️ Eliminar Medicamento
+            </button>
+
             <a href="../inventario/index.php" style="display:block; text-align:center; margin-top:15px; color:#34495e; font-weight:bold;">← Cancelar</a>
         </form>
     <?php else: ?>
