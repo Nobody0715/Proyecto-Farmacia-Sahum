@@ -1,12 +1,16 @@
 <?php
 require_once '../init.php'; 
 use App\Medicamento;
+use App\Categoria; 
 
 requireLogin();
 requireOperator(); 
 
 $medModel = new Medicamento($pdo);
-$categorias = $medModel->obtenerCategorias();
+$catModel = new Categoria($pdo); // Crea una instancia de Categoria
+
+$categorias = $catModel->listar(); // Llama al método correcto de la clase Categoria
+
 $mensaje = '';
 
 if ($_POST) {

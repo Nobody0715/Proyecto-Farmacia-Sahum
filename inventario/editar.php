@@ -1,12 +1,16 @@
 <?php
 require_once '../init.php'; // Usamos nuestro nuevo archivo init.php
 use App\Medicamento;
+use App\Categoria; // 1. IMPORTA LA CLASE CATEGORIA
 
 requireLogin();
 requireAdmin();
 
 $medModel = new Medicamento($pdo);
-$categorias = $medModel->obtenerCategorias();
+$catModel = new Categoria($pdo); // 2. INSTANCIA LA CLASE CATEGORIA
+
+// 3. Obtener categorías usando el modelo de categoría, NO el de medicamento
+$categorias = $catModel->listar();
 
 $id = (int)$_GET['id'] ?? 0;
 $mensaje = '';

@@ -1,16 +1,13 @@
 <?php
-require_once '../includes/auth.php';
+require_once '../init.php';
+use App\Categoria;
+
 requireLogin();
 requireAdmin();
-require_once '../config/database.php';
 
-// Generar token CSRF
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
+$catModel = new Categoria($pdo);
 
-$mensaje = '';
-
+// Procesar el formulario (Patrón Post-Redirect-Get)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
         die("❌ Error de seguridad.");
@@ -18,14 +15,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['nombre'])) {
     
     $nombre = trim($_POST['nombre']);
     if (!empty($nombre)) {
-        $stmt = $pdo->prepare("INSERT INTO categorias (nombre) VALUES (?)");
-        $stmt->execute([$nombre]);
-        $mensaje = "✅ Categoría agregada con éxito.";
+        $catModel->crear($nombre);
+        // Redirección para evitar duplicados al recargar
+        header('Location: categorias.php?msg=exito');
+        exit;
     }
 }
 
-$stmt = $pdo->query("SELECT * FROM categorias ORDER BY nombre ASC");
-$categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// Obtener todas las categorías usando el modelo
+$categorias = $catModel->listar();
+$mensaje = (isset($_GET['msg']) && $_GET['msg'] == 'exito') ? "✅ Categoría agregada con éxito." : '';
 ?>
 
 <?php include '../includes/header.php'; ?>
@@ -41,10 +40,10 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
         margin: 0; 
         display: flex; 
         flex-direction: column; 
-        min-height: 100vh; /* Cuerpo ocupa toda la pantalla */
+        min-height: 100vh; 
     }
 
-    .wrapper { flex: 1; } /* Empuja el footer hacia abajo */
+    .wrapper { flex: 1; }
 
     .glass-container { 
         background: rgba(255, 255, 255, 0.25); 
@@ -66,12 +65,12 @@ $categorias = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <div class="glass-container">
         <h2 style="text-align:center; color:#2c3e50;">🏷️ Gestión de Categorías</h2>
         
-        <?php if ($mensaje): ?><div style="text-align:center; color:green; font-weight:bold;"><?= $mensaje ?></div><?php endif; ?>
+        <?php if ($mensaje): ?><div style="text-align:center; color:green; font-weight:bold; margin-bottom: 15px;"><?= $mensaje ?></div><?php endif; ?>
 
         <form method="POST" style="text-align:center; margin-bottom: 30px;">
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
-            <input type="text" name="nombre" placeholder="Nombre de nueva categoría" required style="padding:10px; width:60%; border-radius:5px; border:1px solid #ccc;">
-            <button type="submit" style="padding:10px 20px; background:#3498db; color:white; border:none; cursor:pointer; border-radius:5px;">➕ Agregar</button>
+            <input type="text" name="nombre" placeholder="Nombre de nueva categoría" required style="padding:12px; width:60%; border-radius:8px; border:1px solid #ccc;">
+            <button type="submit" style="padding:12px 20px; background:#3498db; color:white; border:none; cursor:pointer; border-radius:8px; font-weight:bold;">➕ Agregar</button>
         </form>
 
         <table class="styled-table">

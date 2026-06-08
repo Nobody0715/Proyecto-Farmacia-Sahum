@@ -1,7 +1,6 @@
 <?php
 require_once '../includes/auth.php';
 requireLogin();
-// CAMBIO: Permitimos acceso a Farmacéuticos y Admins
 requireOperator(); 
 require_once '../config/database.php';
 
@@ -22,7 +21,6 @@ if ($_POST) {
     $tipo           = $_POST['tipo'];
     $cantidad       = (int)$_POST['cantidad'];
     $observacion    = trim($_POST['observacion'] ?? '');
-    $ip_registro    = $_SERVER['REMOTE_ADDR']; 
 
     if ($medicamento_id > 0 && $cantidad > 0) {
         try {
@@ -40,7 +38,9 @@ if ($_POST) {
             $stmt = $pdo->prepare("UPDATE medicamentos SET stock = stock $signo ? WHERE id = ?");
             $stmt->execute([$cantidad, $medicamento_id]);
 
-            $obs_final = $observacion . " [IP: " . $ip_registro . "]";
+            // CAMBIO: Ahora guardamos solo la observación, sin la IP
+            $obs_final = $observacion; 
+            
             $stmt = $pdo->prepare("INSERT INTO movimientos (medicamento_id, tipo, cantidad, usuario_id, observacion) VALUES (?, ?, ?, ?, ?)");
             $stmt->execute([$medicamento_id, $tipo, $cantidad, $_SESSION['user_id'], $obs_final]);
 
