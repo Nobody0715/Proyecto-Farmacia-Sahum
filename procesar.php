@@ -1,7 +1,6 @@
 <?php
 include('conexion.php');
 
-// 1. Lógica para AGREGAR
 if (isset($_POST['agregar'])) {
     $nombre = $_POST['nombre'];
     $cantidad = $_POST['cantidad'];
@@ -17,7 +16,6 @@ if (isset($_POST['agregar'])) {
     mysqli_stmt_close($stmt);
 }
 
-// 2. Lógica para EDITAR ÚNICAMENTE EL STOCK
 if (isset($_POST['editar_stock'])) {
     $id = $_POST['id_editar'];
     $nuevo_stock = $_POST['nuevo_stock'];
@@ -31,7 +29,6 @@ if (isset($_POST['editar_stock'])) {
     mysqli_stmt_close($stmt);
 }
 
-// 3. Lógica para ELIMINAR
 if (isset($_GET['eliminar'])) {
     $id = $_GET['eliminar'];
 

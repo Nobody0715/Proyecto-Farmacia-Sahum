@@ -58,7 +58,6 @@ requireLogin();
     <?php
     $search = $_GET['search'] ?? '';
 
-    // JOIN con la tabla 'users' para traer el nombre del usuario
     $sql = "SELECT m.*, med.nombre as medicamento, u.nombre as nombre_usuario 
             FROM movimientos m 
             JOIN medicamentos med ON m.medicamento_id = med.id 
@@ -85,7 +84,6 @@ requireLogin();
         <tbody>
             <?php if (count($movimientos) > 0): ?>
                 <?php foreach ($movimientos as $mov): 
-                    // Limpiamos la IP del texto de observación
                     $obs_limpia = preg_replace('/\[IP: .*\]/', '', $mov['observacion']);
                 ?>
                     <tr>

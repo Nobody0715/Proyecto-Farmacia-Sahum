@@ -7,7 +7,7 @@
 </style>
 
 <div class="glass-card">
-    <h2>✏️ Editar: <?= htmlspecialchars($med['nombre']) ?></h2>
+    <h2> Editar: <?= htmlspecialchars($med['nombre']) ?></h2>
     <?php if ($mensaje): ?><p style="background: #d4edda; color: #155724; padding: 10px; border-radius: 5px;"><strong><?= $mensaje ?></strong></p><?php endif; ?>
 
     <form method="POST">

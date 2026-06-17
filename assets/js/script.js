@@ -1,4 +1,3 @@
-// Validación de formularios
 function validarCantidad() {
     const cant = document.getElementById('cantidad');
     if (cant.value <= 0) {

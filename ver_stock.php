@@ -1,5 +1,4 @@
 <?php
-// 1. CONFIGURACIÓN DE CONEXIÓN
 $host = "localhost";
 $user = "root";
 $pass = "";
@@ -11,8 +10,6 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// 2. CONSULTA USANDO TUS VARIABLES REALES
-// Tabla: productos | Columnas: nombre, stock_actual
 $sql = "SELECT nombre, stock_actual, fecha_ingreso FROM productos ORDER BY nombre ASC";
 $result = $conn->query($sql);
 ?>

@@ -25,7 +25,6 @@ class Database {
     }
 }
 
-// MANTENEMOS ESTA VARIABLE PARA QUE TUS ARCHIVOS ACTUALES NO SE ROMPAN
 $dbInstance = Database::getInstance();
 $pdo = $dbInstance->pdo;
 ?>

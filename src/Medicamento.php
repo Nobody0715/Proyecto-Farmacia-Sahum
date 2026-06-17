@@ -2,14 +2,13 @@
 namespace App;
 
 class Medicamento extends BaseModel {
-    private $logger; // Composición
+    private $logger; 
 
     public function __construct(\PDO $pdo) {
         parent::__construct($pdo);
         $this->logger = new Logger($pdo); 
     }
 
-    // --- MÉTODOS DE BÚSQUEDA Y CATEGORÍAS ---
     public function obtenerCategorias() {
         return $this->db->query("SELECT * FROM categorias ORDER BY nombre ASC")->fetchAll(\PDO::FETCH_ASSOC);
     }
@@ -41,7 +40,6 @@ class Medicamento extends BaseModel {
         return $stmt->fetch(\PDO::FETCH_ASSOC);
     }
 
-    // --- MÉTODOS DE ESCRITURA Y LÓGICA DE NEGOCIO ---
     public function crear($nombre, $presentacion, $concentracion, $categoria_id, $stock, $stock_min) {
         $stmt = $this->db->prepare("INSERT INTO medicamentos (nombre, presentacion, concentracion, categoria_id, stock, stock_minimo, deleted_at) VALUES (?, ?, ?, ?, ?, ?, NULL)");
         $result = $stmt->execute([$nombre, $presentacion, $concentracion, $categoria_id, $stock, $stock_min]);
@@ -56,21 +54,17 @@ class Medicamento extends BaseModel {
         return $stmt->execute([$nombre, $presentacion, $concentracion, $categoria_id, $stock, $stock_min, $id]);
     }
 
-    // NUEVO MÉTODO POO: Lógica completa de movimiento
     public function aplicarMovimiento($id, $tipo, $cantidad, $usuario_id, $observacion, $stock_actual) {
         $this->db->beginTransaction();
 
-        // 1. Validar salida
         if ($tipo === 'salida' && $stock_actual < $cantidad) {
             throw new \Exception("Stock insuficiente. Solo quedan " . $stock_actual . " unidades disponibles.");
         }
 
-        // 2. Actualizar stock
         $signo = ($tipo === 'entrada') ? '+' : '-';
         $stmt = $this->db->prepare("UPDATE medicamentos SET stock = stock $signo ? WHERE id = ?");
         $stmt->execute([$cantidad, $id]);
 
-        // 3. Registrar movimiento usando el Logger (Composición)
         $this->logger->registrar($id, $tipo, $cantidad, $usuario_id, $observacion);
 
         $this->db->commit();

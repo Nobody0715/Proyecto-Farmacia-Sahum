@@ -38,7 +38,7 @@
             <label>Observación:</label>
             <textarea name="observacion" class="form-control" rows="3"></textarea>
             
-            <button type="submit" class="btn-submit">✅ Registrar Movimiento</button>
+            <button type="submit" class="btn-submit"> Registrar Movimiento</button>
             
             <div style="text-align: center; margin-top: 20px;">
                 <a href="../dashboard.php" style="color:#2c3e50; font-weight:bold; text-decoration:none;">← Volver al Panel</a>

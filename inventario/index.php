@@ -6,7 +6,6 @@ $medModel = new Medicamento($pdo);
 $search = $_GET['search'] ?? '';
 $bajo_stock = isset($_GET['bajo_stock']);
 
-// Lógica de negocio encapsulada
 $medicamentos = $medModel->buscar($search, $bajo_stock);
 ?>
 

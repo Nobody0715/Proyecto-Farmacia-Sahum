@@ -49,6 +49,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// CARGAMOS LA VISTA
 include '../views/inventario/agregar_view.php';
 ?>

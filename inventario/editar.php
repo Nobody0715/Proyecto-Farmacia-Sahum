@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($medModel->actualizar($id, $_POST['nombre'], $_POST['presentacion'], $_POST['concentracion'], (int)$_POST['categoria_id'], (int)$_POST['stock'], (int)$_POST['stock_minimo'])) {
         $mensaje = "✅ Medicamento actualizado correctamente";
-        $med = $medModel->obtenerPorId($id); // Refrescar datos
+        $med = $medModel->obtenerPorId($id); 
     } else {
         $mensaje = "❌ Error al actualizar.";
     }

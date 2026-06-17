@@ -11,7 +11,6 @@ class MedicamentoController {
     }
 
     public function procesarAgregar($datos) {
-        // Aquí centralizamos la lógica de negocio
         $this->medModel->nombre = $datos['nombre'];
         $this->medModel->presentacion = $datos['presentacion'];
         $this->medModel->concentracion = $datos['concentracion'];

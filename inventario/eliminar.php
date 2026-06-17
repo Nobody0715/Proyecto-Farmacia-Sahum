@@ -21,7 +21,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0 && $med) {
         $mensaje = "❌ Debes escribir un motivo de eliminación.";
     } else {
         try {
-            // Lógica delegada al modelo
             $medModel->eliminarLogico($id, $_SESSION['user_id'], $observacion, $med['stock']);
             header('Location: ../inventario/index.php?msg=eliminado');
             exit;
@@ -31,6 +30,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id > 0 && $med) {
     }
 }
 
-// Cargar la vista
 include '../views/inventario/eliminar_view.php';
 ?>

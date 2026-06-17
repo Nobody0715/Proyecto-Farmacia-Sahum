@@ -5,7 +5,7 @@
 </style>
 
 <div class="glass-card">
-    <h2 style="text-align:center;">🗑️ Eliminar Medicamento</h2>
+    <h2 style="text-align:center;"> Eliminar Medicamento</h2>
     <?php if ($mensaje): ?><p style="color:red; background:#ffebee; padding:15px; border-radius:5px; text-align:center;"><?= $mensaje ?></p><?php endif; ?>
 
     <?php if ($med): ?>
@@ -15,7 +15,7 @@
             <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
             <label><strong>Motivo de Eliminación / Observación:</strong></label>
             <textarea name="observacion" rows="5" style="width:100%; padding:12px; border-radius:8px; border:1px solid #ccc; margin: 10px 0;" required></textarea>
-            <button type="submit" style="padding:12px 25px; background:#e74c3c; color:white; border:none; cursor:pointer; border-radius:8px; width:100%; font-weight:bold;" onclick="return confirm('¿Confirmar?')">🗑️ Eliminar Medicamento</button>
+            <button type="submit" style="padding:12px 25px; background:#e74c3c; color:white; border:none; cursor:pointer; border-radius:8px; width:100%; font-weight:bold;" onclick="return confirm('¿Confirmar?')"> Eliminar Medicamento</button>
             <a href="../inventario/index.php" style="display:block; text-align:center; margin-top:15px; color:#34495e; font-weight:bold;">← Cancelar</a>
         </form>
     <?php else: ?>

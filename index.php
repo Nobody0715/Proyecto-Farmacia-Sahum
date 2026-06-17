@@ -30,7 +30,6 @@ if (empty($_SESSION['csrf_token'])) {
 
     .wrapper { flex: 1; }
 
-    /* --- Botón Hamburguesa Admin --- */
     .menu-admin-toggle {
         position: fixed; top: 20px; right: 20px; z-index: 1001; cursor: pointer;
         background: var(--header-bg); padding: 12px; border-radius: 8px;
@@ -43,7 +42,6 @@ if (empty($_SESSION['csrf_token'])) {
     }
     .login-dropdown.active { right: 20px; }
 
-    /* --- Contenedor Principal --- */
     .inventory-card {
         max-width: 1250px;
         margin: 30px auto;
@@ -80,7 +78,7 @@ if (empty($_SESSION['csrf_token'])) {
 
     <div id="loginPanel" class="login-dropdown">
         <div style="background: white; padding: 25px; border-radius: 15px; border: 2px solid var(--dark-text); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-            <h3 style="margin-top:0; text-align:center;">🔑 Admin Login</h3>
+            <h3 style="margin-top:0; text-align:center;"> Login</h3>
             <form method="POST" action="login.php">
                 <input type="hidden" name="csrf_token" value="<?= $_SESSION['csrf_token'] ?>">
                 <input type="text" name="username" placeholder="Usuario" required style="width:100%; padding:10px; margin-bottom:10px;">
@@ -106,7 +104,6 @@ if (empty($_SESSION['csrf_token'])) {
 
         <?php
         $search = "%" . ($_GET['search'] ?? '') . "%";
-        // JOIN con categorías para que la búsqueda también encuentre por nombre de categoría
         $stmt = $pdo->prepare("SELECT m.* FROM medicamentos m 
                                LEFT JOIN categorias c ON m.categoria_id = c.id 
                                WHERE (m.nombre LIKE ? OR c.nombre LIKE ?) 

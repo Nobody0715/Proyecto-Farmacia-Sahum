@@ -1,4 +1,3 @@
-<!-- views/inventario_view.php -->
 <div class="wrapper">
     <div class="glass-container">
         <h2 style="color: #2c3e50; text-align:center;">📋 Inventario Actual</h2>
